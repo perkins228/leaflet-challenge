@@ -5,47 +5,45 @@ d3.json(queryUrl, function(data) {
 });
 
 function createFeatures(eqData){
-    // function onEachFeature(feature, layer){
-    //     layer.bindPopup("<h3>" + feature.properties.place +
-    //   "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
-    // };
+    function onEachFeature(feature, layer){
+        layer.bindPopup("<h3>" + feature.properties.place +
+      "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
+    };
 
-    // var earthquakes = L.geoJSON(earthquakeData, {
-    //     onEachFeature: onEachFeature
-    //   });
+    var earthquakes = L.geoJSON(eqData, {
+        onEachFeature: onEachFeature
+      });
 
-    for (var i = 0; i < eqData.length; i++) {
-    var depth = eqData[i].geometry.coordinates[2];
-    depth = +depth;
-    console.log(depth)
-    var latlng = eqData[i].geometry.coordinates[0,2];
-    var color = "";
+    function chooseSize(magnitude){
+        return magnitude * 50000
+    }
 
-    if (depth < 10) {
+    function chooseColor(depth){
+        if (depth < 10) {
         color = "#80ff00";
-    }
-    else if(depth < 30) {
+        }
+        else if(depth < 30) {
         color = "#bfff00";
-    }
-    else if(depth < 50) {
+        }
+        else if(depth < 50) {
         color = "#ffff00";
-    }
-    else if(depth < 70) {
+        }
+        else if(depth < 70) {
         color = "#ffbf00";
-    }
-    else if(depth < 90) {
+        }
+        else if(depth < 90) {
         color = "#ff8000";
-    }
-    else {
+        }
+        else {
         color = "#ff0000";
+        }
     }
-
-    var eqMarker = {
+    function setStyle(feature){
         fillOpacity: 0.5,
-        color: color,
-        fillColor: color,
+        color: chooseColor(feature.geometry.coordinates[2]),
+        fillColor: chooseColor(feature.geometry.coordinates[2]),
         // Adjust radius
-        radius: eqData[i].properties.mag * 50000
+        radius: chooseSize(feature.properties.mag)
       }
     
     var earthquakes = L.geoJSON(eqData, {
