@@ -5,14 +5,17 @@ d3.json(queryUrl, function(data) {
 });
 
 function createFeatures(eqData){
-    function onEachFeature(feature, layer){
-        layer.bindPopup("<h3>" + feature.properties.place +
-      "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
-    };
+    // function onEachFeature(feature, layer){
+    //     layer.bindPopup("<h3>" + feature.properties.place +
+    //   "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");
+    // };
 
     var earthquakes = L.geoJSON(eqData, {
-        onEachFeature: onEachFeature
-      });
+        pointToLayer: function (feature, latlng) {
+            return L.circle(latlng, setStyle(feature)).bindPopup("<h3>" + feature.properties.place +
+            "</h3><hr><p>" + new Date(feature.properties.time) + "</p>");;
+        }
+    })
 
     function chooseSize(magnitude){
         return magnitude * 50000
@@ -39,20 +42,14 @@ function createFeatures(eqData){
         }
     }
     function setStyle(feature){
-        fillOpacity: 0.5,
+        return {
         color: chooseColor(feature.geometry.coordinates[2]),
         fillColor: chooseColor(feature.geometry.coordinates[2]),
-        // Adjust radius
+        fillOpacity: 0.5,
         radius: chooseSize(feature.properties.mag)
       }
-    
-    var earthquakes = L.geoJSON(eqData, {
-        pointToLayer: function (feature, latlng) {
-            return L.circle(latlng, eqMarker).bindPopup("<h3>" + eqData[i].properties.place +
-            "</h3><hr><p>" + new Date(eqData[i].properties.time) + "</p>");;
-        }
-    });
-}
+    }
+ 
     createMap(earthquakes);
 
 }   
